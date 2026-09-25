@@ -38,13 +38,17 @@
         
         /* تصميم النوافذ المنبثقة (Modals) */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: #fff; margin: 5% auto; padding: 25px; border-radius: 10px; width: 80%; max-width: 600px; position: relative; animation: slideDown 0.3s; line-height: 1.6; }
+        .modal-content { background-color: #fff; margin: 5% auto; padding: 25px; border-radius: 10px; width: 85%; max-width: 700px; position: relative; animation: slideDown 0.3s; line-height: 1.6; overflow-y: auto; max-height: 85vh; }
         .close-btn { position: absolute; left: 20px; top: 20px; font-size: 24px; font-weight: bold; color: #64748b; cursor: pointer; }
         .close-btn:hover { color: #0f172a; }
         
         /* زر ورقة القوانين العائم */
         .fab { position: fixed; bottom: 30px; left: 30px; background-color: #f59e0b; color: white; border: none; border-radius: 50px; padding: 15px 25px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 999; width: auto; }
         .fab:hover { background-color: #d97706; transform: scale(1.05); }
+
+        .formula-section { margin-bottom: 25px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 15px; }
+        .formula-section:last-child { border-bottom: none; }
+        .formula-title { color: #2563eb; font-weight: bold; font-size: 18px; margin-bottom: 15px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
@@ -174,28 +178,60 @@
 </div>
 
 <!-- زر ورقة القوانين العائم -->
-<button class="fab" onclick="document.getElementById('formulaModal').style.display='block'">📋 القوانين</button>
+<button class="fab" onclick="document.getElementById('formulaModal').style.display='block'">📋 القوانين الشاملة</button>
 
-<!-- نافذة ورقة القوانين (مأخوذة حرفياً من السلايدات) -->
+<!-- نافذة ورقة القوانين الشاملة -->
 <div id="formulaModal" class="modal">
     <div class="modal-content">
         <span class="close-btn" onclick="document.getElementById('formulaModal').style.display='none'">&times;</span>
-        <h2 style="color: #f59e0b; border-bottom: 2px solid #fcd34d; padding-bottom: 10px;">قوانين التصميم (Singly Reinforced)</h2>
-        <div style="font-size: 16px; direction: ltr; text-align: left;">
-            <p><strong>m:</strong></p>
-            <p>$$ m = \frac{f_y}{0.85 f_c'} $$</p>
-            <p><strong>Rn (from known dimensions):</strong></p>
-            <p>$$ R_n = \frac{M_u}{\phi b d^2} ; \text{assume } \phi = 0.9 $$</p>
-            <p><strong>Rn (from assumed ρ):</strong></p>
-            <p>$$ R_n = \rho f_y \left(1 - \frac{1}{2} \rho m \right) $$</p>
-            <p><strong>ρ calculation:</strong></p>
-            <p>$$ \rho = \frac{1}{m} \left( 1 - \sqrt{1 - \frac{2 m R_n}{f_y}} \right) $$</p>
-            <p><strong>Required Dimensions:</strong></p>
-            <p>$$ b d^2 = \frac{M_u}{\phi R_n} ; \text{assume } \phi = 0.9 $$</p>
-            <p><strong>Steel Area:</strong></p>
-            <p>$$ A_s = \rho b d $$</p>
-            <p><strong>Self-weight of beam (DLs):</strong></p>
-            <p>$$ DLs = 25 \times (b \times h) \text{ kN/m (b and h in m)} $$</p>
+        <h2 style="color: #f59e0b; border-bottom: 2px solid #fcd34d; padding-bottom: 10px; text-align: center;">Formula Sheet (Lec 6)</h2>
+        
+        <div style="font-size: 15px; direction: ltr; text-align: left;">
+            
+            <!-- القسم الأول: تحليل أحادي التسليح -->
+            <div class="formula-section">
+                <div class="formula-title">1. Analysis of Singly Reinforced Beam</div>
+                <p>$$ a = \frac{A_s f_y}{0.85 f_c' b} $$</p>
+                <p>$$ x = \frac{a}{\beta_1} $$</p>
+                <p>$$ \epsilon_s = \left( \frac{d - x}{x} \right) 0.003 $$</p>
+                <p>$$ M_n = A_s f_y \left( d - \frac{a}{2} \right) $$</p>
+            </div>
+
+            <!-- القسم الثاني: تحليل ثنائي التسليح -->
+            <div class="formula-section">
+                <div class="formula-title">2. Analysis of Doubly Reinforced Beam</div>
+                <p><strong>A. Assuming Compression Steel Yields ($f_s' = f_y$):</strong></p>
+                <p>$$ a = \frac{A_s f_y - A_s' (f_y - 0.85 f_c')}{0.85 f_c' b} $$</p>
+                <p>$$ x = \frac{a}{\beta_1} $$</p>
+                <p>$$ \epsilon_s' = \left( \frac{x - d'}{x} \right) 0.003 $$</p>
+                <p>If $\epsilon_s' \ge \epsilon_y$ (Assumption is Correct).</p>
+                
+                <p><strong>B. If Compression Steel NOT Yielded ($\epsilon_s' < \epsilon_y$):</strong></p>
+                <p>Find $x$ from the quadratic equation:</p>
+                <p>$$ 0.85 f_c' (\beta_1 x) b + A_s' \left( \left( \frac{x - d'}{x} \right) 0.003 E_s - 0.85 f_c' \right) = A_s f_y $$</p>
+                <p>$$ f_s' = \left( \frac{x - d'}{x} \right) 0.003 E_s $$</p>
+                
+                <p><strong>C. Nominal Moment ($M_n$):</strong></p>
+                <p>$$ M_n = 0.85 f_c' a b \left( d - \frac{a}{2} \right) + A_s' (f_s' - 0.85 f_c') (d - d') $$</p>
+                <p><small><em>* Use $f_y$ instead of $f_s'$ if yielded.</em></small></p>
+            </div>
+
+            <!-- القسم الثالث: تصميم أحادي التسليح -->
+            <div class="formula-section">
+                <div class="formula-title">3. Design of Singly Reinforced Beam</div>
+                <p>$$ m = \frac{f_y}{0.85 f_c'} $$</p>
+                <p><strong>Rn (from assumed ρ):</strong></p>
+                <p>$$ R_n = \rho f_y \left(1 - \frac{1}{2} \rho m \right) $$</p>
+                <p><strong>Required Dimensions:</strong></p>
+                <p>$$ b d^2 = \frac{M_u}{\phi R_n} ; \text{assume } \phi = 0.9 $$</p>
+                <p><strong>ρ calculation (if dimensions are known):</strong></p>
+                <p>$$ R_n = \frac{M_u}{\phi b d^2} $$</p>
+                <p>$$ \rho = \frac{1}{m} \left( 1 - \sqrt{1 - \frac{2 m R_n}{f_y}} \right) $$</p>
+                <p><strong>Steel Area & Self Weight:</strong></p>
+                <p>$$ A_s = \rho b d $$</p>
+                <p>$$ DLs = 25 \times (b \times h) \text{ kN/m (b and h in m)} $$</p>
+            </div>
+            
         </div>
     </div>
 </div>
@@ -321,7 +357,7 @@
             document.getElementById('feed_' + currentStep).className = "feedback success";
             document.getElementById(currentStep).classList.add('completed');
             document.getElementById(nextStep).classList.add('active');
-            params.user_bd2 = userVal; // for design step 2
+            params.user_bd2 = userVal; 
         } else {
             document.getElementById('feed_' + currentStep).innerHTML = "❌ خطأ في الحساب.";
             document.getElementById('feed_' + currentStep).className = "feedback error";
